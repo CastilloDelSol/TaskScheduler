@@ -23,7 +23,9 @@ Implements simple **RTOS-like primitives** (tasks, priorities, delays, notificat
 #include <Arduino.h>
 #include "TaskScheduler.h"
 
-TaskScheduler<2> tm;
+#define NUM_TASKS 2
+
+TaskScheduler<NUM_TASKS> tm;
 
 uint8_t hBlink;
 uint8_t hMessage;
