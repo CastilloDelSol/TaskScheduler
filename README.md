@@ -18,7 +18,7 @@ Implements simple **RTOS-like primitives** (tasks, priorities, delays, notificat
 
 ---
 
-## 🧩 Example
+## 🧩 Quick Example
 ```cpp
 #include <Arduino.h>
 #include "TaskScheduler.h"
@@ -57,6 +57,43 @@ void loop() {
 
 ---
 
+## 🧠 Example Collection
+
+### 1️⃣ `01_Blink.ino`
+Minimal example: blink the onboard LED using a scheduled task.
+```cpp
+#include <Arduino.h>
+#include "TaskScheduler.h"
+
+#define NUM_TASKS 1
+TaskScheduler<NUM_TASKS> tm;
+uint8_t hLed;
+
+void ledTask() {
+  static const uint16_t INTERVAL = 500;
+  digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+  tm.vTaskDelayUntil(INTERVAL);
+}
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  hLed = tm.xTaskCreate(ledTask, 0, 0);
+}
+
+void loop() { tm.run(); }
+```
+
+### 2️⃣ `02_ResumeAfterBlink.ino`
+Demonstrates `vTaskResumeAfter()` to restart a paused task after a delay.
+
+### 3️⃣ `03_SerialBlink.ino`
+Shows running two tasks: one blinking an LED and another printing serial messages with independent timing.
+
+### 4️⃣ `04_SerialBlinkQueue.ino`
+Advanced example combining **TaskScheduler** with a **TinyQueue** to pass data between producer and consumer tasks.
+
+---
+
 ## 🛠️ How It Works
 - Each task is a simple `void()` function.  
 - Tasks **cooperatively yield** back to the scheduler using one of:
@@ -89,3 +126,8 @@ TaskScheduler<NUM_TASKS> tm(quantumMs);
 ```
 - `NUM_TASKS`: max number of tasks (≤ 32)
 - `quantumMs`: tick quantum in milliseconds (default 1 ms)
+
+---
+
+## 📜 License
+MIT License © 2025 Your Name
