@@ -58,10 +58,13 @@ void loop() {
 ---
 
 ## 🛠️ How It Works
-- Each task is a simple `void()` function.
-- Tasks **yield** back to the scheduler via delay/yield calls.
-- Scheduler runs tasks that are **due**, in **priority order**.
-- If a task finishes without rescheduling itself → it suspends automatically.
+- Each task is a simple `void()` function.  
+- Tasks **cooperatively yield** back to the scheduler using one of:
+  - `vTaskDelay(ms)` — schedule next run after *ms*  
+  - `vTaskDelayUntil(period)` — maintain a fixed periodic rate relative to the previous release time  
+  - `vTaskYieldNextTick()` — yield until the next scheduler tick (cheap throttle)  
+- The scheduler runs all tasks that are **due**, in **priority order**.  
+- If a task finishes without setting a next wake time → it is **automatically suspended** until resumed manually.  
 
 ---
 
