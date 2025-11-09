@@ -11,6 +11,7 @@ public:
     BoolArray32() : v(0) {}
 
     inline void clear() { v = 0; }
+    inline void clear(uint8_t idx) { v &= ~(1u << idx); }
     inline void set(uint8_t idx) { v |= (1u << idx); }
     inline bool get(uint8_t idx) const { return (v >> idx) & 1u; }
 };
