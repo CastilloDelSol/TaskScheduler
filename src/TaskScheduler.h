@@ -195,15 +195,6 @@ public:
     }
 
     /**
-     * @brief Yield current task until next tick (cheap throttle).
-     */
-    inline void vTaskYieldNextTick() {
-        if (!hasCurrentTask()) return;
-        overrideSet  = true;
-        overrideNext = tickNow; // same-tick re-run prevented by ranMask
-    }
-
-    /**
      * @brief Period-locked delay: schedule next wake at the first
      *        future multiple of @p period from this run's release time.
      *        If @p period==0, yields to next tick.
@@ -231,6 +222,22 @@ public:
         const uint32_t k = (late / period) + 1;     // 32/32 divide
         overrideSet  = true;
         overrideNext = anchor + k * period;
+    }
+
+    /**
+     * @brief Yield current task until next tick (cheap throttle).
+     */
+    inline void vTaskYieldNextTick() {
+        vTaskDelayUntil(0);
+    }
+
+    /**
+     * @brief Request to run the current task again within this same scheduler tick.
+     */
+    inline void vTaskRepeatThisTick() {
+        vTaskDelayUntil(0);
+        cascadePending = true;    // ensure another cascade pass happens
+        ranMask.clear(currentId); // allow re-run in same tick
     }
 
     /**
@@ -330,5 +337,6 @@ public:
         nextDue = newNextDue; // may be UINT32_MAX if none enabled
     }
 };
+
 
 #endif // TASK_SCHEDULER_H
